@@ -1,0 +1,120 @@
+---
+import '../styles/global.css'
+import Hero from '../components/Hero.astro'
+import About from '../components/About.astro'
+import Projects from '../components/Projects.astro'
+import ParticlesCanvas from '../components/ParticlesCanvas.astro'
+import SpecsStrip from '../components/SpecsStrip.astro'
+import Footer from '../components/Footer.astro'
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achu &mdash; ROM Developer</title>
+    <meta name="description" content="BCA student &middot; ROM developer for Redmi Note 7 Pro (violet)." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  </head>
+  <body>
+    <Hero />
+    <About />
+    <Projects />
+    <ParticlesCanvas />
+    <SpecsStrip />
+    <Footer />
+    <div id="grain-overlay" aria-hidden="true"></div>
+
+    <script is:inline>
+      var chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`'
+
+      function scrambleText(element, text, duration) {
+        try {
+          var len = text.length
+          var initial = ''
+          for (var i = 0; i < len; i++) {
+            initial += text[i] === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)]
+          }
+          element.textContent = initial
+
+          var tl = gsap.timeline()
+          tl.to(element, {
+            duration: duration,
+            ease: 'power4.out',
+            onUpdate: function () {
+              var progress = this.progress()
+              var result = ''
+              for (var i = 0; i < len; i++) {
+                if (text[i] === ' ') { result += ' '; continue }
+                var threshold = i / len
+                if (progress > threshold) {
+                  result += (progress - threshold < 0.04 && Math.random() > 0.7)
+                    ? chars[Math.floor(Math.random() * chars.length)]
+                    : text[i]
+                } else {
+                  result += chars[Math.floor(Math.random() * chars.length)]
+                }
+              }
+              element.textContent = result
+            },
+            onComplete: function () { element.textContent = text },
+          })
+        } catch (e) {
+          element.textContent = text
+        }
+      }
+
+      // ── INTERSECTION OBSERVER — SCROLL ANIMATIONS ──────
+      document.addEventListener('DOMContentLoaded', function () {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible')
+              observer.unobserve(entry.target)
+            }
+          })
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' })
+
+        document.querySelectorAll('.anim').forEach(function (el) {
+          observer.observe(el)
+        })
+      })
+
+      // ── HERO — GSAP PAGE-LOAD SEQUENCE ────────────────
+      window.addEventListener('load', function () {
+        if (typeof gsap === 'undefined') return
+
+        var title = document.querySelector('[data-hero-title]')
+        var tagline = document.querySelector('[data-hero-tagline]')
+        var cursor = document.querySelector('[data-hero-cursor]')
+        var indicator = document.querySelector('[data-hero-scroll]')
+        var nav = document.querySelector('[data-nav]')
+
+        if (title && tagline && cursor && indicator && nav) {
+          gsap.set(title, { opacity: 0 })
+          gsap.set(tagline, { opacity: 0 })
+          gsap.set(cursor, { opacity: 0 })
+          gsap.set(indicator, { opacity: 0 })
+          gsap.set(nav, { opacity: 0 })
+
+          var tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+          tl.from(nav, { y: -16, duration: 0.4 })
+            .set(title, { opacity: 1 })
+            .call(function () { scrambleText(title, "I'm Achu", 1.2) }, null, '-=0.1')
+            .from(tagline, { y: 24, duration: 0.6 }, '-=0.3')
+            .from(cursor, { duration: 0.3 }, '-=0.2')
+            .from(indicator, { duration: 0.5 }, '-=0.1')
+        }
+      })
+    </script>
+  </body>
+</html>
