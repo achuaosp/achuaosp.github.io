@@ -230,3 +230,63 @@ h2::after {
 .anim-d3 { transition-delay: 0.3s; }
 .anim-d4 { transition-delay: 0.4s; }
 .anim-d5 { transition-delay: 0.5s; }
+
+/* ── Section dividers ── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 6vw;
+  margin: 1rem 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.divider-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #7c3aed;
+  box-shadow: 0 0 8px #7c3aed;
+}
+
+/* ── Custom cursor (desktop only) ── */
+@media (hover: hover) {
+  *, *::before, *::after { cursor: none; }
+
+  .custom-cursor {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: #7c3aed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(0, 0);
+    transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease;
+    mix-blend-mode: screen;
+  }
+
+  .custom-cursor-ring {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(124, 58, 237, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(0, 0);
+    transition: width 0.12s ease, height 0.12s ease, border-color 0.2s ease;
+  }
+}
+
+/* ── html.lenis, html.lenis body lenis classes ── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }

@@ -120,6 +120,9 @@ animate()
     line-height: 1.8;
     color: var(--text-primary);
     max-width: 36rem;
+    border-left: 2px solid #7c3aed;
+    padding-left: 1.5rem;
+    margin-left: 0;
   }
 
   .about-text em {
@@ -138,15 +141,18 @@ animate()
     font-size: var(--text-xs);
     letter-spacing: 0.05em;
     color: var(--text-secondary);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(124, 58, 237, 0.3);
     padding: 0.4rem 0.75rem;
     line-height: 1;
-    transition: border-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
+    transition: all 0.3s ease;
+    cursor: default;
   }
 
   .tech-tags li:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: #7c3aed;
+    color: #e8eaf0;
+    background: rgba(124, 58, 237, 0.08);
+    box-shadow: 0 0 12px rgba(124, 58, 237, 0.2);
   }
 
   @media (max-width: 768px) {

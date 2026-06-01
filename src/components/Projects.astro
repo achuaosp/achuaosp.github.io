@@ -5,7 +5,7 @@
       <span class="section-counter mono">[02]</span>
       <h2>Projects</h2>
     </div>
-    <div class="cards">
+    <div class="projects-grid">
       <article class="project-card anim anim-up anim-d1" data-project-card>
         <div class="badge">Official Maintainer</div>
         <h3 class="card-title">Project <span class="thin">Matrixx</span></h3>
@@ -18,7 +18,7 @@
           <span>SM6150</span>
           <span>AOSP</span>
         </div>
-        <a href="#" class="card-btn">Download</a>
+        <a href="#" class="btn-download">DOWNLOAD <span class="arrow">&darr;</span></a>
       </article>
 
       <article class="project-card anim anim-up anim-d2" data-project-card>
@@ -33,7 +33,22 @@
           <span>SM6150</span>
           <span>AOSP</span>
         </div>
-        <a href="#" class="card-btn">Download</a>
+        <a href="#" class="btn-download">DOWNLOAD <span class="arrow">&darr;</span></a>
+      </article>
+
+      <article class="project-card anim anim-up anim-d3" data-project-card>
+        <div class="badge">Official Maintainer</div>
+        <h3 class="card-title">LunarisAOSP</h3>
+        <p class="card-subtitle">
+          AOSP-based custom ROM &middot; Clean stock experience &middot; Stable
+          and minimal
+        </p>
+        <div class="card-tags">
+          <span>violet</span>
+          <span>SM6150</span>
+          <span>AOSP</span>
+        </div>
+        <a href="#" class="btn-download">DOWNLOAD <span class="arrow">&darr;</span></a>
       </article>
     </div>
   </div>
@@ -127,13 +142,31 @@ animate()
     color: var(--accent);
   }
 
-  .cards {
+  .projects-grid {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
   }
 
+  .projects-grid::before,
+  .projects-grid::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.5rem;
+    height: 1px;
+    background: rgba(124, 58, 237, 0.4);
+    z-index: 2;
+  }
+
+  .projects-grid::before { left: 33.3333%; }
+  .projects-grid::after  { left: 66.6666%; }
+
   .project-card {
+    position: relative;
+    overflow: hidden;
     background: var(--bg-surface);
     border: 1px solid var(--border);
     padding: 1.5rem;
@@ -143,10 +176,24 @@ animate()
       box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-out);
   }
 
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: #7c3aed;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   .project-card:hover {
     border-color: var(--accent);
     box-shadow: 0 0 24px var(--accent-glow);
     transform: translateY(-4px);
+  }
+
+  .project-card:hover::before {
+    width: 100%;
   }
 
   .card-badge {
@@ -200,8 +247,11 @@ animate()
     line-height: 1;
   }
 
-  .card-btn {
-    display: inline-block;
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow: hidden;
     align-self: flex-start;
     margin-top: auto;
     font-family: var(--font-mono);
@@ -216,9 +266,30 @@ animate()
     transition: background 0.25s var(--ease-out), color 0.25s var(--ease-out);
   }
 
-  .card-btn:hover {
+  .btn-download .arrow {
+    display: inline-block;
+    transform: translateX(-20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-download:hover {
     background: var(--accent);
     color: var(--bg-primary);
+  }
+
+  .btn-download:hover .arrow {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .projects-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .projects-grid::before { left: 50%; }
+    .projects-grid::after  { display: none; }
   }
 
   @media (max-width: 768px) {
@@ -226,8 +297,12 @@ animate()
       padding: 4rem 1.25rem;
     }
 
-    .cards {
+    .projects-grid {
       grid-template-columns: 1fr;
+    }
+
+    .projects-grid::before {
+      display: none;
     }
 
     #chip-canvas { display: none; }

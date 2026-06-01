@@ -11,6 +11,7 @@ import HeroCanvas from './HeroCanvas.astro'
 </nav>
 
 <section class="hero">
+  <div class="hero-glow"></div>
   <HeroCanvas />
   <div class="hero-content">
     <h1 class="hero-name" data-hero-title>I'm <span class="accent">Achu</span></h1>
@@ -18,9 +19,9 @@ import HeroCanvas from './HeroCanvas.astro'
       ROM developer for violet.<span class="cursor" data-hero-cursor>_</span>
     </p>
   </div>
-  <div class="hero-bottom" data-hero-scroll>
-    <div class="hero-rule"></div>
-    <span class="scroll-arrow">&darr;</span>
+  <div class="scroll-hint" data-hero-scroll>
+    <span>scroll</span>
+    <div class="scroll-line"></div>
   </div>
 </section>
 
@@ -59,6 +60,30 @@ import HeroCanvas from './HeroCanvas.astro'
     z-index: 1;
   }
 
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-glow {
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .hero-content {
     position: relative;
     z-index: 2;
@@ -81,31 +106,36 @@ import HeroCanvas from './HeroCanvas.astro'
     51%, 100% { opacity: 0; }
   }
 
-  .hero-bottom {
+  .scroll-hint {
     position: absolute;
-    bottom: 2.5rem;
-    left: 2.5rem;
-    right: 2.5rem;
+    bottom: 2rem;
+    left: 6vw;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
     z-index: 2;
   }
 
-  .hero-rule {
-    flex: 1;
-    height: 1px;
-    background: var(--border);
+  .scroll-hint span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(232,234,240,0.3);
+    writing-mode: vertical-rl;
   }
 
-  .scroll-arrow {
-    color: var(--text-secondary);
-    animation: bob 2s ease-in-out infinite;
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(124,58,237,0.8), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
   }
 
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(6px); }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(0.6); }
   }
 
   @media (max-width: 768px) {
@@ -126,10 +156,11 @@ import HeroCanvas from './HeroCanvas.astro'
       word-break: break-word;
     }
 
-    .hero-bottom {
-      left: 1.25rem;
-      right: 1.25rem;
-      bottom: 1.25rem;
+    .hero-glow {
+      width: 300px;
+      height: 300px;
+      right: -10%;
+      top: 35%;
     }
   }
 </style>

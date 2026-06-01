@@ -27,11 +27,36 @@ import Footer from '../components/Footer.astro'
   </head>
   <body>
     <Hero />
+
+    <div class="section-divider" aria-hidden="true">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
     <About />
+
+    <div class="section-divider" aria-hidden="true">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
     <Projects />
+
     <ParticlesCanvas />
+
+    <div class="section-divider" aria-hidden="true">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
     <SpecsStrip />
     <Footer />
+
+    <div class="custom-cursor" aria-hidden="true"></div>
+    <div class="custom-cursor-ring" aria-hidden="true"></div>
     <div id="grain-overlay" aria-hidden="true"></div>
 
     <script is:inline>
@@ -113,10 +138,15 @@ import Footer from '../components/Footer.astro'
             .set(title, { opacity: 1 })
             .call(function () { scrambleText(title, 1.2) }, null, '-=0.1')
             .from(tagline, { y: 24, duration: 0.6 }, '-=0.3')
-            .from(cursor, { duration: 0.3 }, '-=0.2')
-            .from(indicator, { duration: 0.5 }, '-=0.1')
+            .to(cursor, { opacity: 1, duration: 0.3 }, '-=0.2')
+            .to(indicator, { opacity: 1, duration: 0.5 }, '-=0.1')
         }
       })
+    </script>
+
+    <script>
+      import { initAnimations } from '../scripts/animations.js'
+      initAnimations()
     </script>
   </body>
 </html>
