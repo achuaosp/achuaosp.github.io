@@ -4,12 +4,14 @@
 import * as THREE from 'three'
 
 const canvas = document.getElementById('hero-canvas')
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true })
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  alpha: true,
+  antialias: true
+})
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100)
-camera.position.z = 3.5
 
 const geoOuter = new THREE.IcosahedronGeometry(1.4, 8)
 const matOuter = new THREE.MeshStandardMaterial({
@@ -31,7 +33,6 @@ const matInner = new THREE.MeshStandardMaterial({
 const meshInner = new THREE.Mesh(geoInner, matInner)
 scene.add(meshInner)
 
-// Store original positions for vertex distortion
 const outerPosAttr = geoOuter.attributes.position
 const innerPosAttr = geoInner.attributes.position
 const origOuter = new Float32Array(outerPosAttr.array)
@@ -69,6 +70,56 @@ function distortPositions(posAttr, originals, t) {
   posAttr.needsUpdate = true
 }
 
+function resize() {
+  const w = canvas.offsetWidth
+  const h = canvas.offsetHeight
+  renderer.setSize(w, h, false)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  camera.aspect = w / h
+  camera.updateProjectionMatrix()
+}
+
+resize()
+window.addEventListener('resize', resize)
+
+function updateSpherePosition() {
+  if (window.innerWidth < 480) {
+    meshOuter.position.set(0, 0.5, 0)
+    meshInner.position.set(0, 0.5, 0)
+    camera.position.z = 4.5
+    meshOuter.scale.setScalar(0.7)
+    meshInner.scale.setScalar(0.7)
+  } else if (window.innerWidth < 768) {
+    meshOuter.position.set(0.5, 0, 0)
+    meshInner.position.set(0.5, 0, 0)
+    camera.position.z = 3.5
+    meshOuter.scale.setScalar(0.85)
+    meshInner.scale.setScalar(0.85)
+  } else {
+    meshOuter.position.set(1.5, 0, 0)
+    meshInner.position.set(1.5, 0, 0)
+    camera.position.z = 3
+    meshOuter.scale.setScalar(1)
+    meshInner.scale.setScalar(1)
+  }
+}
+
+updateSpherePosition()
+window.addEventListener('resize', updateSpherePosition)
+
+function updateOpacity() {
+  if (window.innerWidth < 768) {
+    matOuter.opacity = 0.08
+    matInner.opacity = 0.25
+  } else {
+    matOuter.opacity = 0.15
+    matInner.opacity = 0.45
+  }
+}
+
+updateOpacity()
+window.addEventListener('resize', updateOpacity)
+
 function animate() {
   requestAnimationFrame(animate)
   const t = clock.getElapsedTime()
@@ -102,26 +153,17 @@ window.addEventListener('scroll', () => {
   matInner.opacity = 0.45 * (1 - progress)
   matOuter.opacity = 0.15 * (1 - progress)
 })
-
-const ro = new ResizeObserver(() => {
-  const w = canvas.clientWidth
-  const h = canvas.clientHeight
-  renderer.setSize(w, h)
-  camera.aspect = w / h
-  camera.updateProjectionMatrix()
-})
-ro.observe(canvas)
 </script>
 
 <style>
 #hero-canvas {
-  position: absolute;
-  right: -5%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 55%;
-  height: 90%;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
+  opacity: 1;
 }
 </style>
