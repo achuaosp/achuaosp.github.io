@@ -37,8 +37,10 @@ import Footer from '../components/Footer.astro'
     <script is:inline>
       var chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`'
 
-      function scrambleText(element, text, duration) {
+      function scrambleText(element, duration) {
         try {
+          var html = element.innerHTML
+          var text = html.replace(/<[^>]*>/g, '')
           var len = text.length
           var initial = ''
           for (var i = 0; i < len; i++) {
@@ -66,10 +68,10 @@ import Footer from '../components/Footer.astro'
               }
               element.textContent = result
             },
-            onComplete: function () { element.textContent = text },
+            onComplete: function () { element.innerHTML = html },
           })
         } catch (e) {
-          element.textContent = text
+          element.innerHTML = html
         }
       }
 
@@ -109,7 +111,7 @@ import Footer from '../components/Footer.astro'
           var tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
           tl.from(nav, { y: -16, duration: 0.4 })
             .set(title, { opacity: 1 })
-            .call(function () { scrambleText(title, "I'm Achu", 1.2) }, null, '-=0.1')
+            .call(function () { scrambleText(title, 1.2) }, null, '-=0.1')
             .from(tagline, { y: 24, duration: 0.6 }, '-=0.3')
             .from(cursor, { duration: 0.3 }, '-=0.2')
             .from(indicator, { duration: 0.5 }, '-=0.1')

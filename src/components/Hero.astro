@@ -13,7 +13,7 @@ import HeroCanvas from './HeroCanvas.astro'
 <section class="hero">
   <HeroCanvas />
   <div class="hero-content">
-    <h1 class="hero-title" data-hero-title>I'm Achu</h1>
+    <h1 class="hero-name" data-hero-title>I'm <span class="accent">Achu</span></h1>
     <p class="hero-tagline" data-hero-tagline>
       ROM developer for violet.<span class="cursor" data-hero-cursor>_</span>
     </p>
@@ -39,30 +39,12 @@ import HeroCanvas from './HeroCanvas.astro'
   }
 
   .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
   }
 
   .nav-links {
     display: flex;
     gap: 1.5rem;
-  }
-
-  .nav-links a {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    transition: color 0.25s var(--ease-out);
-  }
-
-  .nav-links a:hover {
-    color: var(--accent);
   }
 
   .hero {
@@ -81,21 +63,7 @@ import HeroCanvas from './HeroCanvas.astro'
     padding-left: 8vw;
   }
 
-  .hero-title {
-    font-family: var(--font-mono);
-    font-size: clamp(3.5rem, 10vw, 8rem);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--text-primary);
-    white-space: nowrap;
-  }
-
   .hero-tagline {
-    font-family: var(--font-mono);
-    font-size: clamp(0.9rem, 2vw, 1.25rem);
-    font-weight: 400;
-    color: var(--text-secondary);
     margin-top: 1.5rem;
     letter-spacing: 0.02em;
   }
@@ -129,8 +97,6 @@ import HeroCanvas from './HeroCanvas.astro'
   }
 
   .scroll-arrow {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
     color: var(--text-secondary);
     animation: bob 2s ease-in-out infinite;
   }
@@ -154,10 +120,9 @@ import HeroCanvas from './HeroCanvas.astro'
       padding-right: 1.25rem;
     }
 
-    .hero-title {
+    .hero-name {
       white-space: normal;
       word-break: break-word;
-      font-size: clamp(2.5rem, 15vw, 4rem);
     }
 
     .hero-bottom {

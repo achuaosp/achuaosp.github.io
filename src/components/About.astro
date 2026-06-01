@@ -2,7 +2,10 @@
   <canvas id="core-canvas"></canvas>
   <div class="about-inner">
     <div class="about-left anim anim-left" data-about-left>
-      <h2 class="section-label anim anim-up"><span class="label-counter">[01]</span> About</h2>
+      <div class="section-header anim anim-up" data-label="ABOUT">
+        <span class="section-counter mono">[01]</span>
+        <h2>About</h2>
+      </div>
       <p class="about-text">
         BCA student &middot; ROM developer. I spend most of my time deep in build
         systems, device trees, and kernel work &mdash; always pushing for better
@@ -113,22 +116,7 @@ animate()
     z-index: 1;
   }
 
-  .section-label {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-  }
-
-  .label-counter {
-    color: var(--accent);
-  }
-
   .about-text {
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
     line-height: 1.8;
     color: var(--text-primary);
     max-width: 36rem;
@@ -147,8 +135,7 @@ animate()
   }
 
   .tech-tags li {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     letter-spacing: 0.05em;
     color: var(--text-secondary);
     border: 1px solid var(--border);
