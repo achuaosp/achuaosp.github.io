@@ -1,0 +1,169 @@
+<canvas id="hero-canvas"></canvas>
+
+<script>
+import * as THREE from 'three'
+
+const canvas = document.getElementById('hero-canvas')
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  alpha: true,
+  antialias: true
+})
+
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100)
+
+const geoOuter = new THREE.IcosahedronGeometry(1.4, 8)
+const matOuter = new THREE.MeshStandardMaterial({
+  color: 0x7c3aed,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.15,
+})
+const meshOuter = new THREE.Mesh(geoOuter, matOuter)
+scene.add(meshOuter)
+
+const geoInner = new THREE.IcosahedronGeometry(1.0, 4)
+const matInner = new THREE.MeshStandardMaterial({
+  color: 0x9d5fff,
+  wireframe: true,
+  transparent: true,
+  opacity: 0.45,
+})
+const meshInner = new THREE.Mesh(geoInner, matInner)
+scene.add(meshInner)
+
+const outerPosAttr = geoOuter.attributes.position
+const innerPosAttr = geoInner.attributes.position
+const origOuter = new Float32Array(outerPosAttr.array)
+const origInner = new Float32Array(innerPosAttr.array)
+
+const light1 = new THREE.PointLight(0x7c3aed, 6, 8)
+light1.position.set(3, 2, 2)
+scene.add(light1)
+const light2 = new THREE.PointLight(0x3b0764, 4, 8)
+light2.position.set(-3, -2, 1)
+scene.add(light2)
+const light3 = new THREE.PointLight(0xffffff, 1, 5)
+light3.position.set(0, 3, 3)
+scene.add(light3)
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.05))
+
+let mouseX = 0, mouseY = 0
+window.addEventListener('mousemove', (e) => {
+  mouseX = (e.clientX / window.innerWidth - 0.5) * 2
+  mouseY = -(e.clientY / window.innerHeight - 0.5) * 2
+})
+
+const clock = new THREE.Clock()
+
+function distortPositions(posAttr, originals, t) {
+  for (let i = 0; i < posAttr.count; i++) {
+    const ix = i * 3, iy = i * 3 + 1, iz = i * 3 + 2
+    const ox = originals[ix], oy = originals[iy], oz = originals[iz]
+    const noise = Math.sin(ox * 3 + t) * Math.cos(oy * 3 + t) * 0.06
+    posAttr.array[ix] = ox + noise
+    posAttr.array[iy] = oy + noise
+    posAttr.array[iz] = oz + noise
+  }
+  posAttr.needsUpdate = true
+}
+
+function resize() {
+  const w = canvas.offsetWidth
+  const h = canvas.offsetHeight
+  renderer.setSize(w, h, false)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  camera.aspect = w / h
+  camera.updateProjectionMatrix()
+}
+
+resize()
+window.addEventListener('resize', resize)
+
+function updateSpherePosition() {
+  if (window.innerWidth < 480) {
+    meshOuter.position.set(0, 0.5, 0)
+    meshInner.position.set(0, 0.5, 0)
+    camera.position.z = 4.5
+    meshOuter.scale.setScalar(0.7)
+    meshInner.scale.setScalar(0.7)
+  } else if (window.innerWidth < 768) {
+    meshOuter.position.set(0.5, 0, 0)
+    meshInner.position.set(0.5, 0, 0)
+    camera.position.z = 3.5
+    meshOuter.scale.setScalar(0.85)
+    meshInner.scale.setScalar(0.85)
+  } else {
+    meshOuter.position.set(1.5, 0, 0)
+    meshInner.position.set(1.5, 0, 0)
+    camera.position.z = 3
+    meshOuter.scale.setScalar(1)
+    meshInner.scale.setScalar(1)
+  }
+}
+
+updateSpherePosition()
+window.addEventListener('resize', updateSpherePosition)
+
+function updateOpacity() {
+  if (window.innerWidth < 768) {
+    matOuter.opacity = 0.08
+    matInner.opacity = 0.25
+  } else {
+    matOuter.opacity = 0.15
+    matInner.opacity = 0.45
+  }
+}
+
+updateOpacity()
+window.addEventListener('resize', updateOpacity)
+
+function animate() {
+  requestAnimationFrame(animate)
+  const t = clock.getElapsedTime()
+
+  distortPositions(outerPosAttr, origOuter, t)
+  distortPositions(innerPosAttr, origInner, t * 0.7)
+
+  meshOuter.rotation.y = t * 0.12 + mouseX * 0.4
+  meshOuter.rotation.x = t * 0.07 + mouseY * 0.25
+  meshInner.rotation.y = -t * 0.18 + mouseX * 0.3
+  meshInner.rotation.x = -t * 0.10 + mouseY * 0.2
+
+  light1.position.x = Math.sin(t * 0.5) * 3
+  light1.position.z = Math.cos(t * 0.5) * 3
+  light2.position.x = Math.sin(t * 0.5 + Math.PI) * 3
+  light2.position.z = Math.cos(t * 0.5 + Math.PI) * 3
+
+  renderer.render(scene, camera)
+}
+animate()
+
+window.addEventListener('scroll', () => {
+  const hero = document.querySelector('.hero')
+  if (!hero) return
+  const heroHeight = hero.offsetHeight
+  const progress = Math.min(window.scrollY / heroHeight, 1)
+
+  const scale = 1 - progress * 0.5
+  meshInner.scale.setScalar(scale)
+  meshOuter.scale.setScalar(scale)
+  matInner.opacity = 0.45 * (1 - progress)
+  matOuter.opacity = 0.15 * (1 - progress)
+})
+</script>
+
+<style>
+#hero-canvas {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+}
+</style>

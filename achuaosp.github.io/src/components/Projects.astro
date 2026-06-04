@@ -1,0 +1,310 @@
+<section class="projects projects-section" data-projects>
+  <canvas id="chip-canvas"></canvas>
+  <div class="projects-inner">
+    <div class="section-header anim anim-up" data-label="PROJECTS">
+      <span class="section-counter mono">[02]</span>
+      <h2>Projects</h2>
+    </div>
+    <div class="projects-grid">
+      <article class="project-card anim anim-up anim-d1" data-project-card>
+        <div class="badge">Official Maintainer</div>
+        <h3 class="card-title">Project <span class="thin">Matrixx</span></h3>
+        <p class="card-subtitle">
+          Feature-rich AOSP ROM &middot; Material You &middot; Stable monthly
+          releases
+        </p>
+        <div class="card-tags">
+          <span>violet</span>
+          <span>SM6150</span>
+          <span>AOSP</span>
+        </div>
+        <a href="#" class="btn-download">DOWNLOAD <span class="arrow">&darr;</span></a>
+      </article>
+
+      <article class="project-card anim anim-up anim-d2" data-project-card>
+        <div class="card-badge card-badge--alt">Maintained Build</div>
+        <h3 class="card-title">Project InfinityX</h3>
+        <p class="card-subtitle">
+          Customization-first ROM &middot; SM6150-tuned kernel &middot; Daily
+          driver
+        </p>
+        <div class="card-tags">
+          <span>violet</span>
+          <span>SM6150</span>
+          <span>AOSP</span>
+        </div>
+        <a href="#" class="btn-download">DOWNLOAD <span class="arrow">&darr;</span></a>
+      </article>
+
+      <article class="project-card anim anim-up anim-d3" data-project-card>
+        <div class="badge">Official Maintainer</div>
+        <h3 class="card-title">LunarisAOSP</h3>
+        <p class="card-subtitle">
+          AOSP-based custom ROM &middot; Clean stock experience &middot; Stable
+          and minimal
+        </p>
+        <div class="card-tags">
+          <span>violet</span>
+          <span>SM6150</span>
+          <span>AOSP</span>
+        </div>
+        <a href="#" class="btn-download">DOWNLOAD <span class="arrow">&darr;</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+import * as THREE from 'three'
+
+const canvas = document.getElementById('chip-canvas')
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true })
+renderer.setSize(400, 400)
+
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100)
+camera.position.z = 3
+
+const group = new THREE.Group()
+for (let i = 0; i < 5; i++) {
+  const ringGeo = new THREE.TorusGeometry(0.4 + i * 0.18, 0.012, 8, 80)
+  const ringMat = new THREE.MeshStandardMaterial({
+    color: i % 2 === 0 ? 0x7c3aed : 0x3b0764,
+    metalness: 1,
+    roughness: 0.1,
+    transparent: true,
+    opacity: 0.7 - i * 0.1,
+  })
+  const ring = new THREE.Mesh(ringGeo, ringMat)
+  ring.rotation.x = Math.PI / 2
+  ring.userData.speed = 0.3 + i * 0.15
+  group.add(ring)
+}
+
+scene.add(group)
+scene.add(new THREE.AmbientLight(0xffffff, 0.3))
+const pl = new THREE.PointLight(0x7c3aed, 3, 6)
+pl.position.set(2, 2, 2)
+scene.add(pl)
+
+const clock = new THREE.Clock()
+function animate() {
+  requestAnimationFrame(animate)
+  const t = clock.getElapsedTime()
+  group.children.forEach((ring, i) => {
+    ring.rotation.z = t * ring.userData.speed * (i % 2 === 0 ? 1 : -1)
+  })
+  group.rotation.x = t * 0.1
+  group.rotation.y = t * 0.2
+  renderer.render(scene, camera)
+}
+animate()
+</script>
+
+<style>
+  .projects {
+    padding: 6rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  #chip-canvas {
+    position: absolute;
+    left: -5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40%;
+    height: 80%;
+    pointer-events: none;
+    opacity: 0.2;
+    z-index: 0;
+  }
+
+  .projects-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+  }
+
+  .label-counter {
+    color: var(--accent);
+  }
+
+  .projects-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .projects-grid::before,
+  .projects-grid::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.5rem;
+    height: 1px;
+    background: rgba(124, 58, 237, 0.4);
+    z-index: 2;
+  }
+
+  .projects-grid::before { left: 33.3333%; }
+  .projects-grid::after  { left: 66.6666%; }
+
+  .project-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.3s var(--ease-out),
+      box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: #7c3aed;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .project-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 24px var(--accent-glow);
+    transform: translateY(-4px);
+  }
+
+  .project-card:hover::before {
+    width: 100%;
+  }
+
+  .card-badge {
+    display: inline-block;
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.3rem 0.6rem;
+    margin-bottom: 1.25rem;
+    line-height: 1;
+  }
+
+  .card-badge--alt {
+    color: var(--text-secondary);
+    border-color: var(--border);
+  }
+
+  .card-title {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .card-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-tags span {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+  }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow: hidden;
+    align-self: flex-start;
+    margin-top: auto;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.5rem 1.25rem;
+    line-height: 1;
+    transition: background 0.25s var(--ease-out), color 0.25s var(--ease-out);
+  }
+
+  .btn-download .arrow {
+    display: inline-block;
+    transform: translateX(-20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .btn-download:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+  }
+
+  .btn-download:hover .arrow {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .projects-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .projects-grid::before { left: 50%; }
+    .projects-grid::after  { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    .projects {
+      padding: 4rem 1.25rem;
+    }
+
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .projects-grid::before {
+      display: none;
+    }
+
+    #chip-canvas { display: none; }
+  }
+</style>

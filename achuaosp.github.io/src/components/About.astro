@@ -1,0 +1,168 @@
+<section class="about about-section" data-about>
+  <canvas id="core-canvas"></canvas>
+  <div class="about-inner">
+    <div class="about-left anim anim-left" data-about-left>
+      <div class="section-header anim anim-up" data-label="ABOUT">
+        <span class="section-counter mono">[01]</span>
+        <h2>About</h2>
+      </div>
+      <p class="about-text">
+        BCA student &middot; ROM developer. I spend most of my time deep in build
+        systems, device trees, and kernel work &mdash; always pushing for better
+        performance and a smoother experience.
+      </p>
+    </div>
+    <div class="about-right anim anim-right" data-about-right>
+      <ul class="tech-tags">
+        <li>Android AOSP</li>
+        <li>Device Trees</li>
+        <li>Kernel Work</li>
+        <li>Build Systems</li>
+        <li>SM6150</li>
+        <li>Snapdragon 675</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+import * as THREE from 'three'
+
+const canvas = document.getElementById('core-canvas')
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true })
+renderer.setSize(320, 320)
+
+const scene = new THREE.Scene()
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100)
+camera.position.z = 3
+
+const coreGeo = new THREE.SphereGeometry(0.5, 32, 32)
+const coreMat = new THREE.MeshStandardMaterial({
+  color: 0x7c3aed,
+  emissive: 0x3b0764,
+  emissiveIntensity: 2,
+  metalness: 0.9,
+  roughness: 0.1,
+})
+const core = new THREE.Mesh(coreGeo, coreMat)
+scene.add(core)
+
+const shells = []
+for (let i = 0; i < 3; i++) {
+  const shellGeo = new THREE.SphereGeometry(0.6 + i * 0.15, 16, 16)
+  const shellMat = new THREE.MeshBasicMaterial({
+    color: 0x7c3aed,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.15 - i * 0.04,
+  })
+  const shell = new THREE.Mesh(shellGeo, shellMat)
+  scene.add(shell)
+  shells.push(shell)
+}
+
+const light = new THREE.PointLight(0x7c3aed, 5, 8)
+light.position.set(2, 2, 2)
+scene.add(light)
+scene.add(new THREE.AmbientLight(0xffffff, 0.15))
+
+const clock = new THREE.Clock()
+function animate() {
+  requestAnimationFrame(animate)
+  const t = clock.getElapsedTime()
+  core.rotation.x = t * 0.3
+  core.rotation.y = t * 0.5
+  shells.forEach((shell, i) => {
+    shell.rotation.x = t * (0.2 + i * 0.1)
+    shell.rotation.y = t * (0.4 + i * 0.15)
+  })
+  renderer.render(scene, camera)
+}
+animate()
+</script>
+
+<style>
+  .about {
+    padding: 6rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  #core-canvas {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    height: 320px;
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 0;
+  }
+
+  @media (max-width: 1024px) {
+    #core-canvas { display: none; }
+  }
+
+  .about-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 6fr 4fr;
+    gap: 4rem;
+    align-items: start;
+    position: relative;
+    z-index: 1;
+  }
+
+  .about-text {
+    line-height: 1.8;
+    color: var(--text-primary);
+    max-width: 36rem;
+    border-left: 2px solid #7c3aed;
+    padding-left: 1.5rem;
+    margin-left: 0;
+  }
+
+  .about-text em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .tech-tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tech-tags li {
+    font-size: var(--text-xs);
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    padding: 0.4rem 0.75rem;
+    line-height: 1;
+    transition: all 0.3s ease;
+    cursor: default;
+  }
+
+  .tech-tags li:hover {
+    border-color: #7c3aed;
+    color: #e8eaf0;
+    background: rgba(124, 58, 237, 0.08);
+    box-shadow: 0 0 12px rgba(124, 58, 237, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .about {
+      padding: 4rem 1.25rem;
+    }
+
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

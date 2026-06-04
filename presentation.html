@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentation Landing Page</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ============================
+       RESET & BASE
+    ============================ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #fafafa;
+      overflow: hidden;
+      height: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Hide scrollbar across all browsers */
+    ::-webkit-scrollbar { display: none; }
+    html { scrollbar-width: none; }
+    body { scrollbar-width: none; }
+
+    /* ============================
+       SCROLL SNAP CONTAINER
+    ============================ */
+    .presentation {
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    /* ============================
+       SLIDE BASE
+    ============================ */
+    .slide {
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle radial glow in center */
+    .slide::before {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 60%;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    /* ============================
+       SLIDE BACKGROUNDS
+    ============================ */
+    .slide--charcoal {
+      background-color: #0f0f11;
+    }
+    .slide--charcoal::before {
+      background: #c4b5fd;
+    }
+
+    .slide--slate {
+      background-color: #0c1222;
+    }
+    .slide--slate::before {
+      background: #60a5fa;
+    }
+
+    .slide--teal {
+      background-color: #0a1a1a;
+    }
+    .slide--teal::before {
+      background: #2dd4bf;
+    }
+
+    .slide--indigo {
+      background-color: #0e0a1f;
+    }
+    .slide--indigo::before {
+      background: #a78bfa;
+    }
+
+    .slide--rose {
+      background-color: #130a12;
+    }
+    .slide--rose::before {
+      background: #fb7185;
+    }
+
+    /* ============================
+       CONTENT
+    ============================ */
+    .slide__content {
+      text-align: center;
+      max-width: 640px;
+      z-index: 1;
+    }
+
+    .slide__number {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      margin-bottom: 1.5rem;
+      font-family: 'Inter', monospace;
+    }
+
+    .slide__heading {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+
+    .slide__text {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 300;
+      line-height: 1.7;
+      opacity: 0.6;
+    }
+
+    /* Accent dot on headings */
+    .accent {
+      color: inherit;
+    }
+
+    .slide--charcoal .accent { color: #c4b5fd; }
+    .slide--slate .accent { color: #60a5fa; }
+    .slide--teal .accent { color: #2dd4bf; }
+    .slide--indigo .accent { color: #a78bfa; }
+    .slide--rose .accent { color: #fb7185; }
+
+    /* ============================
+       NAVIGATION DOTS
+    ============================ */
+    .nav-dots {
+      position: fixed;
+      right: 2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 100;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+
+    .nav-dot:hover {
+      background: rgba(255, 255, 255, 0.5);
+      transform: scale(1.3);
+    }
+
+    .nav-dot.active {
+      background: #fafafa;
+      transform: scale(1.4);
+    }
+
+    /* ============================
+       SCROLL HINT
+    ============================ */
+    .scroll-hint {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 100;
+      opacity: 0.3;
+      animation: fade-pulse 2s ease-in-out infinite;
+    }
+
+    .scroll-hint__text {
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-family: 'Inter', monospace;
+    }
+
+    .scroll-hint__arrow {
+      width: 1px;
+      height: 24px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+      position: relative;
+    }
+
+    .scroll-hint__arrow::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -3px;
+      width: 7px;
+      height: 7px;
+      border-right: 1px solid rgba(255,255,255,0.5);
+      border-bottom: 1px solid rgba(255,255,255,0.5);
+      transform: rotate(45deg);
+    }
+
+    @keyframes fade-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    /* ============================
+       RESPONSIVE
+    ============================ */
+    @media (max-width: 768px) {
+      .nav-dots {
+        right: 1rem;
+        gap: 0.6rem;
+      }
+
+      .nav-dot {
+        width: 6px;
+        height: 6px;
+      }
+
+      .slide {
+        padding: 1.5rem;
+      }
+
+      .scroll-hint {
+        bottom: 1.5rem;
+      }
+    }
+
+    /* Reduce motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .scroll-hint { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Presentation Container with Scroll Snap -->
+  <div class="presentation" id="presentation">
+    
+    <!-- Slide 1: Deep Charcoal -->
+    <section class="slide slide--charcoal">
+      <div class="slide__content">
+        <p class="slide__number">01 / 05</p>
+        <h1 class="slide__heading">Design with<span class="accent"> purpose</span><span class="accent">.</span></h1>
+        <p class="slide__text">Every pixel tells a story. We craft digital experiences that resonate, engage, and inspire action through thoughtful design.</p>
+      </div>
+    </section>
+    
+    <!-- Slide 2: Slate Blue -->
+    <section class="slide slide--slate">
+      <div class="slide__content">
+        <p class="slide__number">02 / 05</p>
+        <h1 class="slide__heading">Build for<span class="accent"> scale</span><span class="accent">.</span></h1>
+        <p class="slide__text">Performance isn't optional. Our solutions are engineered to grow with your ambitions, handling millions without breaking a sweat.</p>
+      </div>
+    </section>
+    
+    <!-- Slide 3: Dark Teal -->
+    <section class="slide slide--teal">
+      <div class="slide__content">
+        <p class="slide__number">03 / 05</p>
+        <h1 class="slide__heading">Ship with<span class="accent"> confidence</span><span class="accent">.</span></h1>
+        <p class="slide__text">From concept to production, we follow rigorous processes that ensure quality at every stage of the development lifecycle.</p>
+      </div>
+    </section>
+    
+    <!-- Slide 4: Indigo -->
+    <section class="slide slide--indigo">
+      <div class="slide__content">
+        <p class="slide__number">04 / 05</p>
+        <h1 class="slide__heading">Iterate<span class="accent"> relentlessly</span><span class="accent">.</span></h1>
+        <p class="slide__text">Great products are never finished. We embrace continuous improvement, learning from data and user feedback to evolve.</p>
+      </div>
+    </section>
+    
+    <!-- Slide 5: Rose -->
+    <section class="slide slide--rose">
+      <div class="slide__content">
+        <p class="slide__number">05 / 05</p>
+        <h1 class="slide__heading">Let's create<span class="accent"> together</span><span class="accent">.</span></h1>
+        <p class="slide__text">Ready to bring your vision to life? Let's start a conversation and build something extraordinary.</p>
+      </div>
+    </section>
+    
+  </div>
+  
+  <!-- Navigation Dots -->
+  <nav class="nav-dots" aria-label="Slide navigation">
+    <button class="nav-dot active" data-slide="0" aria-label="Slide 1"></button>
+    <button class="nav-dot" data-slide="1" aria-label="Slide 2"></button>
+    <button class="nav-dot" data-slide="2" aria-label="Slide 3"></button>
+    <button class="nav-dot" data-slide="3" aria-label="Slide 4"></button>
+    <button class="nav-dot" data-slide="4" aria-label="Slide 5"></button>
+  </nav>
+  
+  <!-- Scroll Hint -->
+  <div class="scroll-hint" id="scrollHint">
+    <span class="scroll-hint__text">Scroll</span>
+    <div class="scroll-hint__arrow"></div>
+  </div>
+  
+  <script>
+    // ==================
+    // NAV DOTS
+    // ==================
+    const presentation = document.getElementById('presentation');
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.nav-dot');
+    const scrollHint = document.getElementById('scrollHint');
+    
+    // Click to navigate
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const index = parseInt(dot.dataset.slide);
+        slides[index].scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+    
+    // Update active dot on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = Array.from(slides).indexOf(entry.target);
+          
+          dots.forEach(d => d.classList.remove('active'));
+          dots[index].classList.add('active');
+          
+          // Hide scroll hint after first scroll
+          if (index > 0) {
+            scrollHint.style.opacity = '0';
+            scrollHint.style.transition = 'opacity 0.5s ease';
+          } else {
+            scrollHint.style.opacity = '';
+          }
+        }
+      });
+    }, {
+      threshold: 0.6
+    });
+    
+    slides.forEach(slide => observer.observe(slide));
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      const current = Array.from(dots).findIndex(d => d.classList.contains('active'));
+      
+      if (e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        if (current < slides.length - 1) {
+          slides[current + 1].scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (current > 0) {
+          slides[current - 1].scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+---
+import '../styles/global.css'
+import Hero from '../components/Hero.astro'
+import About from '../components/About.astro'
+import Projects from '../components/Projects.astro'
+import ParticlesCanvas from '../components/ParticlesCanvas.astro'
+import SpecsStrip from '../components/SpecsStrip.astro'
+import Footer from '../components/Footer.astro'
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achu &mdash; ROM Developer</title>
+    <meta name="description" content="BCA student &middot; ROM developer for Redmi Note 7 Pro (violet)." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  </head>
+  <body>
+    <Hero />
+
+    <div class="section-divider" aria-hidden="true">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <About />
+
+    <div class="section-divider" aria-hidden="true">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <Projects />
+
+    <ParticlesCanvas />
+
+    <div class="section-divider" aria-hidden="true">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <SpecsStrip />
+    <Footer />
+
+    <div class="custom-cursor" aria-hidden="true"></div>
+    <div class="custom-cursor-ring" aria-hidden="true"></div>
+    <div id="grain-overlay" aria-hidden="true"></div>
+
+    <script is:inline>
+      var chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`'
+
+      function scrambleText(element, duration) {
+        try {
+          var html = element.innerHTML
+          var text = html.replace(/<[^>]*>/g, '')
+          var len = text.length
+          var initial = ''
+          for (var i = 0; i < len; i++) {
+            initial += text[i] === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)]
+          }
+          element.textContent = initial
+
+          var tl = gsap.timeline()
+          tl.to(element, {
+            duration: duration,
+            ease: 'power4.out',
+            onUpdate: function () {
+              var progress = this.progress()
+              var result = ''
+              for (var i = 0; i < len; i++) {
+                if (text[i] === ' ') { result += ' '; continue }
+                var threshold = i / len
+                if (progress > threshold) {
+                  result += (progress - threshold < 0.04 && Math.random() > 0.7)
+                    ? chars[Math.floor(Math.random() * chars.length)]
+                    : text[i]
+                } else {
+                  result += chars[Math.floor(Math.random() * chars.length)]
+                }
+              }
+              element.textContent = result
+            },
+            onComplete: function () { element.innerHTML = html },
+          })
+        } catch (e) {
+          element.innerHTML = html
+        }
+      }
+
+      // ── INTERSECTION OBSERVER — SCROLL ANIMATIONS ──────
+      document.addEventListener('DOMContentLoaded', function () {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible')
+              observer.unobserve(entry.target)
+            }
+          })
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' })
+
+        document.querySelectorAll('.anim').forEach(function (el) {
+          observer.observe(el)
+        })
+      })
+
+      // ── HERO — GSAP PAGE-LOAD SEQUENCE ────────────────
+      window.addEventListener('load', function () {
+        if (typeof gsap === 'undefined') return
+
+        var title = document.querySelector('[data-hero-title]')
+        var tagline = document.querySelector('[data-hero-tagline]')
+        var cursor = document.querySelector('[data-hero-cursor]')
+        var indicator = document.querySelector('[data-hero-scroll]')
+        var nav = document.querySelector('[data-nav]')
+
+        if (title && tagline && cursor && indicator && nav) {
+          gsap.set(title, { opacity: 0 })
+          gsap.set(tagline, { opacity: 0 })
+          gsap.set(cursor, { opacity: 0 })
+          gsap.set(indicator, { opacity: 0 })
+          gsap.set(nav, { opacity: 0 })
+
+          var tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+          tl.from(nav, { y: -16, duration: 0.4 })
+            .set(title, { opacity: 1 })
+            .call(function () { scrambleText(title, 1.2) }, null, '-=0.1')
+            .from(tagline, { y: 24, duration: 0.6 }, '-=0.3')
+            .to(cursor, { opacity: 1, duration: 0.3 }, '-=0.2')
+            .to(indicator, { opacity: 1, duration: 0.5 }, '-=0.1')
+        }
+      })
+    </script>
+
+    <script>
+      import { initAnimations } from '../scripts/animations.js'
+      initAnimations()
+    </script>
+  </body>
+</html>
